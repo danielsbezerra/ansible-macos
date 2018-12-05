@@ -1,0 +1,69 @@
+---
+- name: 'Install MySQL 5.7'
+  homebrew:
+    name: mysql@5.7
+    state: present
+
+- name: 'Install MySQL Complements'
+  homebrew:
+    name:
+      - mysql-client
+      - mysql-utilities
+    state: present
+
+- name: 'Install OS dependencies I'
+  homebrew:
+    name:
+      - python
+      - boost-python
+      - boost-python3
+    state: present
+
+- name: 'Install OS dependencies II'
+  homebrew_cask:
+    name:
+      - mysql-connector-python
+      - mysql-utilities
+    state: present
+
+- name: Install PyMySQL
+  shell: /usr/local/bin/python3 -m pip install PyMySQL
+
+- name: Create database
+  mysql_db:
+    name: "{{ bd_name }}"
+    login_user: "{{ usr_db }}"
+    login_password: "{{ usr_db_paswd }}"
+    state: present
+
+- name: Copy database script file
+  copy:
+    src: "{{ bd_name }}_dump.sql"
+    dest: /tmp
+
+- name: Restore database objects
+  mysql_db:
+    login_user: "{{ usr_db }}"
+    login_password: "{{ usr_db_passwd }}"
+    state: import
+    name: all
+    target: "/tmp/{{ bd_name }}_dump.sql"
+  environment:
+    PATH: "{{ mysql_path }}"
+
+# - name: Create MySQL user
+#   mysql_user:
+#     name: "{{ usr_app }}"
+#     login_user: root
+#     password: "{{ bd_passwd }}"
+#     priv: "{{ bd_name }}.*:ALL"
+#     state: present
+#     host: '{{ item }}'
+#   with_items:
+#     - "{{ dbserver_ip }}"
+
+# - name: 'Configure MySQL to accept remote connections'
+#   copy:
+#     src: mysql/files/my.cnf
+#     dest: "{{ mysql_cnf_path }}"
+#   become: yes

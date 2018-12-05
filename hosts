@@ -1,0 +1,5 @@
+[dbserver]
+MacMini ansible_user=Daniel ansible_python_interpreter=/usr/local/bin/python3
+
+[webserver]
+MacMini ansible_user=Daniel

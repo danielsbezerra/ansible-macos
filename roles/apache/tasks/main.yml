@@ -1,0 +1,24 @@
+---
+- name: 'Install PHP7'
+  homebrew:
+    name: php@7.0
+    update_homebrew: yes
+    state: present
+
+- name: 'Install Apache'
+  homebrew:
+    name: httpd
+    state: latest
+
+#Create app directory if it doesn't exist
+- file:
+    path: "{{ app_path }}"
+    state: directory
+    mode: 0755
+
+- name: Copy application files to apache directory
+  copy:
+    src: index.php
+    dest: "{{ app_path }}"
+  notify:
+    - restart mysql

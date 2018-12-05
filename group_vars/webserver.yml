@@ -1,0 +1,4 @@
+---
+{{ webserver_ip }}: '192.168.0.19'
+{{ app_path }}: '/Library/WebServer/Documents/app'
+{{ usr_app }}: usr_app
